@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Physics AP — Chapter 4 & 5 · 9B</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --rose:#ff2d78;--pink:#ff6eb4;--blush:#ffb3d1;--hot:#c4004f;
+  --bg:#0d0008;--card:#1e0016;--border:rgba(255,110,180,.18);
+  --text:#ffe8f3;--muted:#c090aa;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;cursor:none;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");opacity:.4;}
+#cur,#ring{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+#cur{width:12px;height:12px;background:var(--rose);mix-blend-mode:screen;}
+#ring{width:32px;height:32px;border:1.5px solid var(--pink);}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;
+  background:rgba(13,0,8,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Playfair Display',serif;font-size:1rem;cursor:pointer;
+  background:linear-gradient(90deg,var(--rose),var(--blush));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-links{display:flex;gap:1.8rem;}
+.nav-links button{background:none;border:none;color:var(--muted);font-size:.78rem;
+  letter-spacing:.07em;text-transform:uppercase;font-weight:600;
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:color .2s;}
+.nav-links button:hover,.nav-links button.here{color:var(--blush);}
+.nav-links button.here{color:var(--rose);}
+@media(max-width:560px){.nav-links{gap:.8rem;}.nav-links button{font-size:.66rem;}}
+
+/* PAGE SYSTEM */
+.page{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;
+  opacity:0;pointer-events:none;
+  transition:opacity .45s ease, transform .45s cubic-bezier(.77,0,.18,1);
+  transform:translateY(20px);z-index:1;}
+.page.active{opacity:1;pointer-events:all;transform:translateY(0);}
+.page.exit{opacity:0;transform:translateY(-20px);}
+
+/* HOME */
+.blob{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;animation:drift ease-in-out infinite alternate;}
+.b1{width:620px;height:620px;background:rgba(255,45,120,.2);top:-200px;left:-160px;animation-duration:13s;}
+.b2{width:440px;height:440px;background:rgba(255,110,180,.13);top:35%;right:-90px;animation-duration:10s;animation-delay:-5s;}
+.b3{width:370px;height:370px;background:rgba(200,0,80,.16);bottom:-90px;left:25%;animation-duration:15s;animation-delay:-9s;}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(35px,25px) scale(1.07)}}
+.sparks{position:absolute;inset:0;pointer-events:none;z-index:0;}
+.sp{position:absolute;color:var(--blush);opacity:0;animation:twinkle ease-in-out infinite;}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(0) rotate(0deg)}50%{opacity:.6;transform:scale(1) rotate(180deg)}}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:8rem 2rem 5rem;position:relative;overflow:hidden;}
+.hero-inner{position:relative;z-index:1;max-width:860px;}
+.eyebrow{display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(255,110,180,.1);border:1px solid rgba(255,110,180,.3);
+  border-radius:999px;padding:.4rem 1.3rem;margin-bottom:2rem;
+  font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;color:var(--blush);font-weight:600;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(3.2rem,9vw,7rem);
+  font-weight:900;line-height:1.0;color:#fff;text-shadow:0 0 80px rgba(255,45,120,.35);margin-bottom:.5rem;}
+.hero h1 em{font-style:italic;
+  background:linear-gradient(135deg,var(--rose),var(--blush),var(--rose));
+  background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;animation:shimmer 3s linear infinite;}
+@keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+.hero-sub{font-size:1rem;color:var(--muted);line-height:1.85;margin:1.4rem auto 2.5rem;max-width:560px;}
+.pill-row{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:3rem;}
+.pill{padding:.4rem 1.2rem;border-radius:999px;font-size:.78rem;font-weight:600;
+  border:1px solid rgba(255,110,180,.35);color:var(--blush);transition:all .25s;cursor:pointer;
+  background:rgba(255,110,180,.1);font-family:'DM Sans',sans-serif;}
+.pill:hover{background:rgba(255,45,120,.25);transform:translateY(-3px);border-color:rgba(255,45,120,.5);}
+.cta-row{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+.btn{padding:.8rem 2.2rem;border-radius:14px;font-size:.9rem;font-weight:600;
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .28s;
+  display:inline-flex;align-items:center;gap:.5rem;border:none;}
+.btn-solid{background:linear-gradient(135deg,var(--rose),var(--hot));color:#fff;box-shadow:0 6px 30px rgba(255,45,120,.4);}
+.btn-solid:hover{transform:translateY(-3px);box-shadow:0 14px 42px rgba(255,45,120,.55);}
+.btn-ghost{background:transparent;color:var(--blush);border:1.5px solid rgba(255,110,180,.4);}
+.btn-ghost:hover{background:rgba(255,110,180,.1);transform:translateY(-3px);}
+.scroll-hint{position:absolute;bottom:2.2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.4rem;
+  color:var(--muted);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+  animation:bob 2.5s ease-in-out infinite;z-index:1;}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+.scroll-line{width:1px;height:38px;background:linear-gradient(to bottom,var(--rose),transparent);}
+.section{padding:6rem 2rem;max-width:1100px;margin:0 auto;position:relative;z-index:1;}
+.sec-label{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--rose);font-weight:700;margin-bottom:.5rem;}
+.sec-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);
+  font-weight:900;margin-bottom:1rem;line-height:1.1;text-shadow:0 0 50px rgba(255,45,120,.25);}
+.sec-desc{color:var(--muted);line-height:1.75;max-width:560px;margin-bottom:3rem;font-size:.95rem;}
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,110,180,.3),transparent);max-width:1100px;margin:0 auto;}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+@media(max-width:660px){.about-grid{grid-template-columns:1fr;}}
+.acard{background:var(--card);border:1px solid var(--border);border-radius:22px;
+  padding:2rem;transition:all .32s;position:relative;overflow:hidden;}
+.acard:hover{transform:translateY(-5px);border-color:rgba(255,110,180,.4);box-shadow:0 20px 55px rgba(255,45,120,.14);}
+.acard.wide{grid-column:span 2;display:flex;gap:2rem;align-items:center;}
+@media(max-width:660px){.acard.wide{grid-column:span 1;flex-direction:column;}}
+.acard:nth-child(1){border-top:3px solid var(--rose);}
+.acard:nth-child(2){border-top:3px solid var(--pink);}
+.acard:nth-child(3){border-top:3px solid var(--blush);}
+.acard:nth-child(4){border-top:3px solid var(--hot);}
+.acard:nth-child(5){border-top:3px solid var(--rose);}
+.acard-img{width:190px;height:140px;object-fit:cover;border-radius:14px;flex-shrink:0;border:1.5px solid var(--border);}
+@media(max-width:660px){.acard-img{width:100%;height:170px;}}
+.acard-icon{font-size:2.2rem;margin-bottom:.8rem;}
+.acard h3{font-family:'Playfair Display',serif;font-size:1.15rem;margin-bottom:.6rem;color:#fff;}
+.acard p{color:var(--muted);font-size:.87rem;line-height:1.75;}
+
+/* TOPICS */
+.topic-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+@media(max-width:660px){.topic-grid{grid-template-columns:1fr;}}
+.tlink{cursor:pointer;display:block;border-radius:24px;overflow:hidden;
+  border:1px solid var(--border);background:var(--card);transition:all .35s;position:relative;}
+.tlink:hover{transform:translateY(-7px);box-shadow:0 24px 60px rgba(255,45,120,.22);border-color:rgba(255,110,180,.45);}
+.tlink-img{width:100%;height:200px;object-fit:cover;display:block;
+  filter:brightness(.78) saturate(1.1);transition:filter .4s,transform .4s;}
+.tlink:hover .tlink-img{filter:brightness(.95) saturate(1.3);transform:scale(1.04);}
+.tlink-body{padding:1.8rem 2rem;}
+.tlink-tag{font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--rose);font-weight:700;margin-bottom:.4rem;}
+.tlink-body h3{font-family:'Playfair Display',serif;font-size:1.4rem;color:#fff;margin-bottom:.6rem;line-height:1.15;}
+.tlink-body p{color:var(--muted);font-size:.87rem;line-height:1.7;}
+.tlink-arrow{display:inline-flex;align-items:center;gap:.4rem;margin-top:1rem;
+  font-size:.82rem;font-weight:600;color:var(--rose);transition:gap .2s;}
+.tlink:hover .tlink-arrow{gap:.8rem;}
+.tlink::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--rose),var(--blush),var(--rose));
+  background-size:200%;animation:shimmer 3s linear infinite;}
+
+/* TEAM */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.1rem;}
+.tcard{background:var(--card);border:1px solid var(--border);border-radius:22px;
+  padding:2rem 1.6rem;text-align:center;transition:all .32s;position:relative;overflow:hidden;}
+.tcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--rose),var(--blush));opacity:0;transition:opacity .3s;}
+.tcard:hover{transform:translateY(-7px);box-shadow:0 22px 55px rgba(255,45,120,.2);border-color:rgba(255,110,180,.4);}
+.tcard:hover::before{opacity:1;}
+.ava{width:68px;height:68px;border-radius:20px;margin:0 auto 1rem;
+  display:flex;align-items:center;justify-content:center;font-size:2rem;
+  background:linear-gradient(135deg,rgba(255,45,120,.25),rgba(255,110,180,.15));
+  border:1.5px solid rgba(255,110,180,.3);}
+.tcard-name{font-family:'Playfair Display',serif;font-size:1.05rem;color:#fff;margin-bottom:.25rem;}
+.tcard-no{font-size:.73rem;color:var(--rose);margin-bottom:.7rem;font-weight:700;letter-spacing:.06em;}
+.role-pills{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;}
+.rp{font-size:.68rem;padding:.22rem .7rem;border-radius:999px;
+  background:rgba(255,110,180,.1);color:var(--blush);border:1px solid rgba(255,110,180,.25);font-weight:600;}
+footer{text-align:center;padding:3.5rem 2rem;color:var(--muted);font-size:.78rem;line-height:2.2;border-top:1px solid var(--border);}
+footer strong{color:var(--blush);}
+
+/* TOPIC PAGES */
+.topic-page{padding-top:58px;}
+.shell{display:grid;grid-template-columns:220px 1fr;height:calc(100vh - 58px);}
+@media(max-width:640px){.shell{grid-template-columns:1fr;}}
+.sidebar{border-right:1px solid var(--border);background:rgba(30,0,22,.6);
+  backdrop-filter:blur(10px);display:flex;flex-direction:column;
+  padding:1.5rem 1rem;gap:.4rem;overflow-y:auto;}
+.sidebar-title{font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--rose);font-weight:700;margin-bottom:.6rem;padding:0 .5rem;}
+.sitem{display:flex;align-items:center;gap:.7rem;padding:.65rem .8rem;border-radius:12px;
+  cursor:pointer;font-size:.82rem;font-weight:500;color:var(--muted);
+  border:1px solid transparent;transition:all .2s;text-align:left;
+  background:none;font-family:'DM Sans',sans-serif;width:100%;}
+.sitem:hover{color:var(--text);background:rgba(255,45,120,.08);border-color:rgba(255,45,120,.15);}
+.sitem.active{color:#fff;background:rgba(255,45,120,.15);border-color:rgba(255,45,120,.35);}
+.sitem .num{width:22px;height:22px;border-radius:7px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;
+  background:rgba(255,110,180,.15);color:var(--pink);}
+.sitem.active .num{background:var(--rose);color:#fff;}
+.main-area{position:relative;overflow:hidden;}
+.track{position:absolute;inset:0;display:flex;transition:transform .52s cubic-bezier(.77,0,.18,1);}
+.slide{min-width:100%;height:100%;overflow-y:auto;padding:2.5rem 3rem 5rem;
+  display:flex;flex-direction:column;gap:1.6rem;}
+@media(max-width:640px){.slide{padding:1.5rem 1.2rem 5rem;}}
+.slide-tag{font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--rose);font-weight:700;}
+.slide h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);
+  font-weight:900;line-height:1.1;color:#fff;text-shadow:0 0 40px rgba(255,45,120,.3);}
+.slide-lead{color:var(--muted);font-size:.95rem;line-height:1.8;max-width:680px;}
+.slide-img{width:100%;max-height:210px;object-fit:cover;border-radius:18px;
+  border:1px solid var(--border);filter:brightness(.85) saturate(1.1);}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;}
+.card{background:rgba(255,45,120,.06);border:1px solid var(--border);border-radius:16px;
+  padding:1.2rem;transition:all .25s;}
+.card:hover{background:rgba(255,45,120,.12);border-color:rgba(255,110,180,.35);transform:translateY(-3px);}
+.card h4{font-size:.85rem;color:var(--blush);font-weight:700;margin-bottom:.4rem;}
+.card p{font-size:.8rem;color:var(--muted);line-height:1.65;}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+@media(max-width:700px){.cols{grid-template-columns:1fr;}}
+.col h4{font-family:'Playfair Display',serif;font-size:1rem;color:#fff;margin-bottom:.7rem;}
+.col ul{list-style:none;}
+.col ul li{font-size:.85rem;color:var(--muted);padding:.3rem 0;
+  border-bottom:1px solid rgba(255,110,180,.07);display:flex;gap:.5rem;line-height:1.6;}
+.col ul li:last-child{border-bottom:none;}
+.col ul li::before{content:'✦';color:var(--rose);flex-shrink:0;font-size:.55rem;margin-top:5px;}
+.col ul li strong{color:var(--blush);}
+.fbox{display:inline-block;padding:.55rem 1.2rem;border-radius:12px;
+  background:rgba(255,45,120,.1);border:1px solid rgba(255,45,120,.3);
+  font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--rose);
+  text-shadow:0 0 14px rgba(255,45,120,.4);margin-top:.5rem;}
+.fbox-sm{font-size:.88rem;padding:.4rem .9rem;}
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;
+  justify-content:space-between;padding:1rem 2rem;
+  background:linear-gradient(to top,rgba(13,0,8,1) 60%,transparent);}
+.bnav-btn{display:flex;align-items:center;gap:.5rem;padding:.55rem 1.4rem;
+  border-radius:10px;border:1.5px solid rgba(255,45,120,.3);
+  background:rgba(255,45,120,.08);color:var(--blush);cursor:pointer;
+  font-size:.82rem;font-weight:600;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.bnav-btn:hover:not(:disabled){background:rgba(255,45,120,.2);transform:translateY(-2px);}
+.bnav-btn:disabled{opacity:.25;cursor:not-allowed;}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,110,180,.25);
+  cursor:pointer;border:none;transition:all .3s;padding:0;}
+.dot.on{background:var(--rose);width:20px;border-radius:4px;}
+.progress{display:flex;gap:.4rem;align-items:center;}
+.ctr{font-size:.75rem;color:var(--muted);margin:0 .8rem;letter-spacing:.06em;}
+.ex-item{background:rgba(255,45,120,.06);border:1px solid var(--border);
+  border-radius:14px;padding:1rem 1.2rem;cursor:pointer;transition:all .22s;}
+.ex-item:hover{background:rgba(255,45,120,.13);border-color:rgba(255,110,180,.45);transform:translateY(-2px);}
+.ex-q{font-size:.88rem;color:var(--text);font-weight:500;line-height:1.65;}
+.ex-q::after{content:' 👆 tap to reveal';font-size:.68rem;color:var(--muted);font-weight:400;margin-left:.3rem;}
+.ex-ans{display:none;margin-top:.8rem;padding:.8rem 1rem;border-radius:10px;
+  background:rgba(255,110,180,.08);border:1px solid rgba(255,110,180,.2);
+  font-size:.85rem;color:var(--blush);line-height:1.75;
+  font-family:'DM Mono',monospace;white-space:pre-line;}
+.ex-ans.show{display:block;animation:exIn .28s ease;}
+@keyframes exIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.unit-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.unit-table th{color:var(--rose);font-weight:700;text-align:left;padding:.5rem .8rem;
+  border-bottom:1px solid rgba(255,45,120,.3);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;}
+.unit-table td{padding:.5rem .8rem;color:var(--muted);border-bottom:1px solid rgba(255,110,180,.07);}
+.unit-table td:first-child{color:var(--blush);font-weight:600;}
+.unit-table tr:hover td{background:rgba(255,45,120,.05);}
+</style>
+</head>
+<body>
+<div id="cur"></div>
+<div id="ring"></div>
+
+<nav>
+  <span class="logo" onclick="showPage('home')">Physics AP ✦</span>
+  <div class="nav-links">
+    <button onclick="showPage('home')" id="nav-home" class="here">Home</button>
+    <button onclick="showPage('measurement')" id="nav-measurement">📏 Measurement</button>
+    <button onclick="showPage('thermal')" id="nav-thermal">🌡️ Thermal</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+    <div class="sparks" id="sparks"></div>
+    <div class="hero-inner">
+      <div class="eyebrow">✦ Santa Laurensia Junior High · Class 9B · 2025/2026</div>
+      <h1>Physics <em>AP</em><br/>Chapter 4 & 5</h1>
+      <p class="hero-sub">A deep dive into <strong style="color:var(--blush)">Measurement</strong> &amp; <strong style="color:var(--blush)">Thermal Physics</strong> — crafted with love by the girls of 9B 🩷</p>
+      <div class="pill-row">
+        <button class="pill" onclick="showPage('measurement')">📏 Measurement</button>
+        <button class="pill" onclick="showPage('thermal')">🌡️ Thermal Physics</button>
+      </div>
+      <div class="cta-row">
+        <button class="btn btn-solid" onclick="document.getElementById('home-about').scrollIntoView({behavior:'smooth'})">Explore Topics →</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('home-team').scrollIntoView({behavior:'smooth'})">Meet the Team 🩷</button>
+      </div>
+    </div>
+    <div class="scroll-hint"><div class="scroll-line"></div><span>scroll</span></div>
+  </section>
+
+  <div id="home-about" class="section">
+    <div class="sec-label">Background</div>
+    <div class="sec-title">What We're Studying</div>
+    <p class="sec-desc">Physics connects the invisible forces of the universe to everyday life. This module explores two pillars of the AP Physics syllabus: precise measurement and the science of heat.</p>
+    <div class="about-grid">
+      <div class="acard wide">
+      <div class="acard">
+  <img class="acard-img" src="https://res.cloudinary.com/jerrick/image/upload/v1746369418/68177b8a135bfa001db77a76.jpg" alt="Measurement">
+  <div class="acard-icon">📏</div>
+          <h3>Why Physics Matters</h3>
+          <p>Physics is the language the universe speaks. From the warmth of sunlight to the precision of a thermometer, every phenomenon traces back to fundamental principles. Understanding measurement and heat equips us to explain — and engineer — the world around us.</p>
+        </div>
+      </div>
+      <div class="acard">
+        <div class="acard">
+  <img class="acard-img" src="https://co.mouser.com/blog/Portals/11/Golata_Redefining-the-basic-measurements-of-physics-theme.png" alt="Measurement">
+  <div class="acard-icon">📏</div>
+        <h3>Chapter 4 — Measurement</h3>
+        <p>Measurement is the process of comparing a physical quantity with a standard unit. The SI system gives scientists a shared language — meters, kilograms, Kelvin — to compare and build on results across the globe.</p>
+      </div>
+      <div class="acard">
+         <img class="acard-img" src="https://i0.wp.com/ibphysics.org/wp-content/uploads/2016/01/63065-004-07b69f7b.jpg?resize=600%2C380&ssl=1" alt="Measurement">
+        <div class="acard-icon">🌡️</div>
+        <h3>Chapter 5 — Thermal Physics</h3>
+        <p>Heat, temperature, and energy flow explain why oceans moderate climate, why sweat cools us, and how refrigerators work. Thermal physics bridges the microscopic motion of particles to the macroscopic world we experience.</p>
+      </div>
+      <div class="acard">
+        <div class="acard-icon">🏫</div>
+        <h3>About Our School</h3>
+        <p>Santa Laurensia Junior High School is a private school in Tangerang, Indonesia — emphasizing academic excellence, character development, and holistic learning with modern science labs.</p>
+      </div>
+      <div class="acard">
+        <div class="acard-icon">📚</div>
+        <h3>This Module</h3>
+        <p>Chapter 4: length, temperature, mass, instruments &amp; unit conversions — with full exercises Parts A, B, C &amp; D. Chapter 5: SHC, latent heat, heat transfer, gas laws — with 7 fully worked problems.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="sec-label">Chapters</div>
+    <div class="sec-title">Pick a Topic</div>
+    <p class="sec-desc">Click either topic to open its interactive slideshow — explore each concept one slide at a time, with clickable exercises at the end.</p>
+    <div class="topic-grid">
+      <div class="tlink" onclick="showPage('measurement')">
+        <img class="tlink-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Metric_system_rulers.svg/1280px-Metric_system_rulers.svg.png" alt="Measurement" onerror="this.style.background='#22001a';this.style.height='80px';"/>
+        <div class="tlink-body">
+          <div class="tlink-tag">Chapter 4</div>
+          <h3>📏 Measurement</h3>
+          <p>SI units, length, temperature, mass, instruments &amp; conversions — 7 interactive slides with full exercises (Parts A, B, C &amp; D).</p>
+          <div class="tlink-arrow">Open slides →</div>
+        </div>
+      </div>
+      <div class="tlink" onclick="showPage('thermal')">
+        <img class="tlink-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Hot_metalwork.jpg/1280px-Hot_metalwork.jpg" alt="Thermal Physics" onerror="this.style.background='#22001a';this.style.height='80px';"/>
+        <div class="tlink-body">
+          <div class="tlink-tag">Chapter 5</div>
+          <h3>🌡️ Thermal Physics</h3>
+          <p>Temperature &amp; heat, SHC, latent heat, heat transfer &amp; gas laws — 7 interactive slides with 7 fully worked exercise questions.</p>
+          <div class="tlink-arrow">Open slides →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+ <div id="home-team" class="section">
+  <div class="sec-label">Authors</div>
+  <div class="sec-title">Our Team 🩷</div>
+  <p class="sec-desc">Grade 9B · Santa Laurensia Junior High School · Academic Year 2025/2026</p>
+
+  <div class="team-grid">
+
+    <div class="tcard">
+      <div class="ava">
+        <img src="jace.jpeg" alt="Jacelyn Lee">
+      </div>
+      <div class="tcard-name">Jacelyn Lee</div>
+      <div class="tcard-no">No. Absen 13</div>
+      <div class="role-pills">
+        <span class="rp">Coding</span>
+        <span class="rp">Physics</span>
+      </div>
+    </div>
+
+    <div class="tcard">
+      <div class="ava">
+        <img src="soheeee.jpeg" alt="Bae Sohee">
+      </div>
+      <div class="tcard-name">Bae Sohee</div>
+      <div class="tcard-no">No. Absen 04</div>
+      <div class="role-pills">
+        <span class="rp">Coding</span>
+        <span class="rp">Physics</span>
+      </div>
+    </div>
+
+    <div class="tcard">
+      <div class="ava">
+        <img src="kin.jpeg" alt="Kinara Renata Lee">
+      </div>
+      <div class="tcard-name">Kinara Renta Lee</div>
+      <div class="tcard-no">No. Absen 18</div>
+      <div class="role-pills">
+        <span class="rp">Physics</span>
+        <span class="rp">Coding</span>
+      </div>
+    </div>
+
+    <div class="tcard">
+      <div class="ava">
+        <img src="emil.jpeg" alt="Emily Tjiptawan">
+      </div>
+      <div class="tcard-name">Emily Tjiptawan</div>
+      <div class="tcard-no">No. Absen 10</div>
+      <div class="role-pills">
+        <span class="rp">Physics</span>
+        <span class="rp">Coding</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+  <footer>
+    <div style="font-size:1.8rem;margin-bottom:.6rem">✦ 🩷 ✦</div>
+    <strong>Physics AP · Chapter 4 & 5</strong><br/>
+    Santa Laurensia Junior High School · Class 9B · 2025/2026<br/>
+    <span style="color:var(--rose)">Jacelyn Lee · Bae Sohee · Kinara Renta Lee · Emily Tjiptawan</span>
+  </footer>
+</div>
+
+
+<!-- MEASUREMENT PAGE -->
+<div class="page topic-page" id="page-measurement">
+  <div class="shell">
+    <aside class="sidebar" id="m-sidebar">
+      <div class="sidebar-title">📏 Measurement</div>
+      <button class="sitem active" onclick="mGo(0)"><span class="num">1</span>What is Measurement?</button>
+      <button class="sitem" onclick="mGo(1)"><span class="num">2</span>Length & Distance</button>
+      <button class="sitem" onclick="mGo(2)"><span class="num">3</span>Temperature</button>
+      <button class="sitem" onclick="mGo(3)"><span class="num">4</span>Mass</button>
+      <button class="sitem" onclick="mGo(4)"><span class="num">5</span>Unit Conversions</button>
+      <button class="sitem" onclick="mGo(5)"><span class="num">6</span>Exercises A & B</button>
+      <button class="sitem" onclick="mGo(6)"><span class="num">7</span>Exercises C & D</button>
+    </aside>
+    <main class="main-area">
+      <div class="track" id="m-track">
+
+        <!-- M SLIDE 0 -->
+        <div class="slide">
+          <div><div class="slide-tag">Measurement · Introduction</div><h2>What is<br/>Measurement?</h2></div>
+          <p class="slide-lead">Measurement is the process of determining the value of a physical quantity by <strong style="color:var(--blush)">comparing it with a standard unit</strong>. For example, when we measure the mass of a bag, we compare it to a kilogram or gram. When we measure the time of a race, we compare it to a second or minute.</p>
+          <img class="slide-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Metric_system_rulers.svg/1280px-Metric_system_rulers.svg.png" alt="Rulers" onerror="this.style.display='none'"/>
+          <div class="cards">
+            <div class="card"><h4>📏 Length</h4><p>How far or long something is.<br/><strong style="color:var(--blush)">SI unit: meter (m)</strong></p></div>
+            <div class="card"><h4>🌡️ Temperature</h4><p>How hot or cold a substance is.<br/><strong style="color:var(--blush)">SI unit: Kelvin (K)</strong></p></div>
+            <div class="card"><h4>⚖️ Mass</h4><p>Amount of matter in an object.<br/><strong style="color:var(--blush)">SI unit: kilogram (kg)</strong></p></div>
+            <div class="card"><h4>⏱️ Time</h4><p>Duration between events.<br/><strong style="color:var(--blush)">SI unit: second (s)</strong></p></div>
+          </div>
+          <div class="card" style="max-width:500px"><h4>💡 Why SI Units?</h4><p>Scientists use SI units so that measurements are standardized and understood worldwide — making it possible to share, compare, and replicate experiments across different countries.</p></div>
+        </div>
+
+        <!-- M SLIDE 1 -->
+        <div class="slide">
+          <div><div class="slide-tag">Measurement · Length</div><h2>Length &<br/>Distance</h2></div>
+          <p class="slide-lead">Length measures how long or how far something is. The SI unit is the <strong style="color:var(--blush)">meter (m)</strong>. Different prefixes are used depending on the scale of measurement.</p>
+          <div class="cols">
+            <div class="col">
+              <h4>All Length Units</h4>
+              <table class="unit-table">
+                <tr><th>Unit</th><th>Symbol</th><th>In meters</th></tr>
+                <tr><td>Kilometer</td><td>km</td><td>1,000 m</td></tr>
+                <tr><td>Meter</td><td>m</td><td>1 m (SI base)</td></tr>
+                <tr><td>Centimeter</td><td>cm</td><td>0.01 m</td></tr>
+                <tr><td>Millimeter</td><td>mm</td><td>0.001 m</td></tr>
+                <tr><td>Micrometer</td><td>µm</td><td>0.000001 m</td></tr>
+                <tr><td>Nanometer</td><td>nm</td><td>0.000000001 m</td></tr>
+              </table>
+            </div>
+            <div class="col">
+              <h4>When to Use Each</h4>
+              <ul>
+                <li><strong>Kilometer (km)</strong> — long distances between cities</li>
+                <li><strong>Meter (m)</strong> — height of a person, room dimensions</li>
+                <li><strong>Centimeter (cm)</strong> — measuring everyday objects like books</li>
+                <li><strong>Millimeter (mm)</strong> — small lengths, thickness of materials</li>
+                <li><strong>Micrometer (µm)</strong> — microscopic measurements, cells</li>
+                <li><strong>Nanometer (nm)</strong> — nanotechnology, atomic-scale structures</li>
+              </ul>
+              <h4 style="margin-top:1rem">Measuring Instruments</h4>
+              <ul>
+                <li><strong>Meter rule</strong> — everyday lengths</li>
+                <li><strong>Vernier caliper</strong> — precise small lengths</li>
+                <li><strong>Micrometer screw gauge</strong> — very small lengths</li>
+                <li><strong>Stopwatch</strong> — measuring time intervals</li>
+                <li><strong>Thermometer</strong> — measuring temperature</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- M SLIDE 2 -->
+        <div class="slide">
+          <div><div class="slide-tag">Measurement · Temperature</div><h2>Temperature</h2></div>
+          <p class="slide-lead">Temperature measures how hot or cold something is. The SI unit is <strong style="color:var(--blush)">Kelvin (K)</strong>. At the particle level, temperature represents the average kinetic energy of particles — higher temperature = faster-moving particles.</p>
+          <div class="cols">
+            <div class="col">
+              <h4>Three Temperature Scales</h4>
+              <ul>
+                <li><strong>Celsius (°C)</strong> — widely used for weather and everyday measurements. Water freezes at 0°C, boils at 100°C.</li>
+                <li><strong>Fahrenheit (°F)</strong> — used in the United States. Water freezes at 32°F, boils at 212°F.</li>
+                <li><strong>Kelvin (K)</strong> — the SI unit used in all scientific calculations. Starts at absolute zero (0 K).</li>
+              </ul>
+              <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:1rem">
+                <div class="fbox" style="font-size:.88rem">K = °C + 273</div>
+                <div class="fbox" style="font-size:.88rem">°C = K − 273</div>
+                <div class="fbox" style="font-size:.88rem">°F = (9/5 × °C) + 32</div>
+              </div>
+            </div>
+            <div class="col">
+              <h4>Key Facts</h4>
+              <ul>
+                <li>Higher temperature = particles move <strong>faster</strong></li>
+                <li>0 K = <strong>absolute zero</strong> — particles completely stop</li>
+                <li>Kelvin is <strong>always</strong> required in scientific formulas</li>
+                <li>Temperature ≠ Heat — they are different quantities</li>
+              </ul>
+              <div class="card" style="margin-top:1rem"><h4>💡 Real Life Example</h4><p>Weather forecasts use °C or °F. But in gas law calculations, scientists must always convert to Kelvin first — because Kelvin starts at true zero particle motion.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- M SLIDE 3 -->
+        <div class="slide">
+          <div><div class="slide-tag">Measurement · Mass</div><h2>Mass</h2></div>
+          <p class="slide-lead">Mass describes the <strong style="color:var(--blush)">amount of matter</strong> in an object. The SI base unit is the <strong style="color:var(--blush)">kilogram (kg)</strong>. Unlike weight, mass is constant — it doesn't change with gravity.</p>
+          <div class="cols">
+            <div class="col">
+              <h4>All Mass Units</h4>
+              <table class="unit-table">
+                <tr><th>Unit</th><th>Symbol</th><th>In kg</th></tr>
+                <tr><td>Ton</td><td>t</td><td>1,000 kg</td></tr>
+                <tr><td>Kilogram</td><td>kg</td><td>1 kg (SI base)</td></tr>
+                <tr><td>Gram</td><td>g</td><td>0.001 kg</td></tr>
+                <tr><td>Milligram</td><td>mg</td><td>0.000001 kg</td></tr>
+              </table>
+              <ul style="margin-top:.8rem">
+                <li><strong>Ton (t)</strong> — very heavy objects like vehicles, cargo</li>
+                <li><strong>Kilogram (kg)</strong> — everyday objects (people, groceries)</li>
+                <li><strong>Gram (g)</strong> — lighter objects (food portions)</li>
+                <li><strong>Milligram (mg)</strong> — tiny amounts like medicine doses</li>
+              </ul>
+            </div>
+            <div class="col">
+              <h4>Mass vs Weight</h4>
+              <ul>
+                <li><strong>Mass</strong> — amount of matter, constant everywhere, unit: kg</li>
+                <li><strong>Weight</strong> — gravitational force on mass, changes with location, unit: Newton (N)</li>
+              </ul>
+              <div class="fbox" style="margin-top:.8rem">W = m × g</div>
+              <p style="font-size:.78rem;color:var(--muted);margin-top:.4rem">g = 9.8 m/s² on Earth's surface</p>
+              <div class="card" style="margin-top:.8rem"><h4>💡 Example</h4><p>Your mass is 50 kg on Earth AND on the Moon — mass never changes. But your weight differs: less on the Moon because gravity is weaker there (1.6 m/s² vs 9.8 m/s² on Earth).</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- M SLIDE 4 -->
+        <div class="slide">
+          <div><div class="slide-tag">Measurement · Conversions</div><h2>Unit Conversions</h2></div>
+          <p class="slide-lead">All SI prefixes are powers of 10 — making conversions systematic. Always write your units, cancel them step by step, and convert to SI before calculating.</p>
+          <div class="cards">
+            <div class="card"><h4>📏 Length</h4><p>1 km = 1,000 m<br/>1 m = 100 cm<br/>1 cm = 10 mm<br/>1 m = 1,000,000 µm<br/>1 m = 1,000,000,000 nm</p></div>
+            <div class="card"><h4>⚖️ Mass</h4><p>1 t = 1,000 kg<br/>1 kg = 1,000 g<br/>1 g = 1,000 mg<br/>1 g = 0.001 kg<br/>1 mg = 0.000001 kg</p></div>
+            <div class="card"><h4>🌡️ Temperature</h4><p>K = °C + 273<br/>°C = K − 273<br/>°F = 9/5 × °C + 32<br/>°C = 5/9 × (°F − 32)</p></div>
+            <div class="card"><h4>⏱️ Time</h4><p>1 min = 60 s<br/>1 hour = 3,600 s<br/>1 day = 86,400 s<br/><br/><strong style="color:var(--blush)">Always convert to SI first!</strong></p></div>
+          </div>
+          <div class="cols">
+            <div class="col"><h4>Example: cm → m</h4><ul>
+              <li>250 cm ÷ 100 = <strong>2.5 m</strong></li>
+              <li>1.2 m × 100 = <strong>120 cm</strong></li>
+            </ul></div>
+            <div class="col"><h4>Example: kg → g & min → s</h4><ul>
+              <li>3.5 kg × 1000 = <strong>3,500 g</strong></li>
+              <li>2 min × 60 = <strong>120 s</strong></li>
+            </ul></div>
+          </div>
+        </div>
+
+        <!-- M SLIDE 5 -->
+        <div class="slide">
+          <div><div class="slide-tag">Measurement · Exercises</div><h2>Exercises<br/>Part A & B</h2></div>
+          <p class="slide-lead">Click each question to reveal the answer. Try it yourself first! 🩷</p>
+          <div style="display:flex;flex-direction:column;gap:.7rem">
+            <div class="slide-tag" style="margin-bottom:.2rem">🟢 Part A — Multiple Choice</div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">1. Which of the following is a base quantity in physics?<br/><span style="color:var(--muted);font-size:.82rem">A. Speed &nbsp;&nbsp; B. Force &nbsp;&nbsp; C. Length &nbsp;&nbsp; D. Density</span></div>
+              <div class="ex-ans">✅ C. Length
+Length is a base SI quantity. Speed, Force, and Density are all derived quantities.</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">2. The SI unit of mass is:<br/><span style="color:var(--muted);font-size:.82rem">A. Gram &nbsp;&nbsp; B. Kilogram &nbsp;&nbsp; C. Pound &nbsp;&nbsp; D. Newton</span></div>
+              <div class="ex-ans">✅ B. Kilogram (kg)
+The SI base unit of mass. Gram is too small; Pound is imperial; Newton is a unit of force.</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">3. Which instrument is used to measure small lengths accurately?<br/><span style="color:var(--muted);font-size:.82rem">A. Meter rule &nbsp;&nbsp; B. Stopwatch &nbsp;&nbsp; C. Vernier caliper &nbsp;&nbsp; D. Thermometer</span></div>
+              <div class="ex-ans">✅ C. Vernier caliper
+Designed for precise measurement of small lengths (accuracy to 0.1 mm). Stopwatch measures time; thermometer measures temperature.</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">4. The SI unit of time is:<br/><span style="color:var(--muted);font-size:.82rem">A. Hour &nbsp;&nbsp; B. Minute &nbsp;&nbsp; C. Second &nbsp;&nbsp; D. Day</span></div>
+              <div class="ex-ans">✅ C. Second (s)
+The SI base unit of time. Hours, minutes, and days are not SI units.</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">5. Measurement uncertainty means:<br/><span style="color:var(--muted);font-size:.82rem">A. Measurement is wrong &nbsp;&nbsp; B. Exact value is known &nbsp;&nbsp; C. There is doubt about exact value &nbsp;&nbsp; D. Instrument is broken</span></div>
+              <div class="ex-ans">✅ C. There is doubt about the exact value
+All measurements have some uncertainty due to instrument limitations and human error.</div>
+            </div>
+            <div class="slide-tag" style="margin:.5rem 0 .2rem">🟢 Part B — Short Answer</div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">6. What is measurement?</div>
+              <div class="ex-ans">✅ Measurement is the process of comparing a physical quantity with a standard unit of measurement.</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">7. Name three basic physical quantities.</div>
+              <div class="ex-ans">✅ Length, Mass, and Time.</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">8. Write the SI unit for: a) Length  b) Mass  c) Time</div>
+              <div class="ex-ans">✅ a) Length → meter (m)
+b) Mass → kilogram (kg)
+c) Time → second (s)</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">9. What instrument is used to measure time?</div>
+              <div class="ex-ans">✅ A stopwatch or clock.</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">10. Define accuracy.</div>
+              <div class="ex-ans">✅ Accuracy is how close a measurement is to the true (accepted) value.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- M SLIDE 6 -->
+        <div class="slide">
+          <div><div class="slide-tag">Measurement · Exercises</div><h2>Exercises<br/>Part C & D</h2></div>
+          <p class="slide-lead">Calculation problems and thinking questions. Click to reveal full worked answers. 🩷</p>
+          <div style="display:flex;flex-direction:column;gap:.7rem">
+            <div class="slide-tag" style="margin-bottom:.2rem">🟢 Part C — Calculation Problems</div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">11. Convert 250 cm into meters.</div>
+              <div class="ex-ans">1 m = 100 cm
+250 ÷ 100 = ✅ 2.5 m</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">12. Convert 3.5 kg into grams.</div>
+              <div class="ex-ans">1 kg = 1,000 g
+3.5 × 1,000 = ✅ 3,500 g</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">13. A student measures a table length as 1.2 m. Express it in centimeters.</div>
+              <div class="ex-ans">1 m = 100 cm
+1.2 × 100 = ✅ 120 cm</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">14. A stopwatch records 2 minutes. Convert it into seconds.</div>
+              <div class="ex-ans">1 minute = 60 seconds
+2 × 60 = ✅ 120 s</div>
+            </div>
+            <div class="slide-tag" style="margin:.5rem 0 .2rem">🟢 Part D — Thinking Question</div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">15. Why do scientists use SI units?</div>
+              <div class="ex-ans">✅ Scientists use SI units so that measurements are standardized and understood worldwide — making it possible to share, compare, and replicate experiments across different countries and laboratories without confusion.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="bottom-nav">
+        <button class="bnav-btn" id="m-prev" onclick="mGo(mCur-1)" disabled>← Prev</button>
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <div class="progress" id="m-dots"></div>
+          <span class="ctr" id="m-ctr">1 / 7</span>
+        </div>
+        <button class="bnav-btn" id="m-next" onclick="mGo(mCur+1)">Next →</button>
+      </div>
+    </main>
+  </div>
+</div>
+
+
+<!-- THERMAL PAGE -->
+<div class="page topic-page" id="page-thermal">
+  <div class="shell">
+    <aside class="sidebar" id="t-sidebar">
+      <div class="sidebar-title">🌡️ Thermal Physics</div>
+      <button class="sitem active" onclick="tGo(0)"><span class="num">1</span>Introduction</button>
+      <button class="sitem" onclick="tGo(1)"><span class="num">2</span>Temperature & Heat</button>
+      <button class="sitem" onclick="tGo(2)"><span class="num">3</span>Specific Heat Capacity</button>
+      <button class="sitem" onclick="tGo(3)"><span class="num">4</span>Specific Latent Heat</button>
+      <button class="sitem" onclick="tGo(4)"><span class="num">5</span>Heat Transfer</button>
+      <button class="sitem" onclick="tGo(5)"><span class="num">6</span>Gas Laws</button>
+      <button class="sitem" onclick="tGo(6)"><span class="num">7</span>Exercises</button>
+    </aside>
+    <main class="main-area">
+      <div class="track" id="t-track">
+
+        <!-- T SLIDE 0 -->
+        <div class="slide">
+          <div><div class="slide-tag">Thermal Physics · Introduction</div><h2>What is<br/>Thermal Physics?</h2></div>
+          <p class="slide-lead">Thermal physics is a branch of physics that studies <strong style="color:var(--blush)">heat, temperature, energy, and how they affect matter</strong>. It explains how microscopic particles (atoms and molecules) move and interact, and how this movement relates to macroscopic properties like temperature and pressure.</p>
+          <p class="slide-lead" style="margin-top:-.5rem">Thermal physics helps us understand everyday processes such as boiling, freezing, heating systems, engines, and even weather changes.</p>
+          <img class="slide-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Thermodynamic_entropy_example_cropped.jpg/1280px-Thermodynamic_entropy_example_cropped.jpg" alt="Thermal" onerror="this.style.display='none'"/>
+          <div class="cards">
+            <div class="card"><h4>🌡️ Temperature</h4><p>Average kinetic energy of particles. Higher temp = faster-moving particles. SI unit: Kelvin (K).</p></div>
+            <div class="card"><h4>🔥 Heat</h4><p>Energy transferred between objects due to temperature difference. Flows hot → cold. Unit: Joule (J).</p></div>
+            <div class="card"><h4>❄️ Latent Heat</h4><p>Energy to change the state of 1 kg of a substance without changing its temperature.</p></div>
+            <div class="card"><h4>🌊 Heat Transfer</h4><p>Three methods: conduction (direct contact), convection (fluid), and radiation (waves).</p></div>
+          </div>
+        </div>
+
+        <!-- T SLIDE 1 -->
+        <div class="slide">
+          <div><div class="slide-tag">Thermal Physics · Basics</div><h2>Temperature<br/>& Heat</h2></div>
+          <p class="slide-lead">Temperature and heat are related but fundamentally different. Temperature is a property of matter; heat is energy in transit between objects due to a temperature difference.</p>
+          <img class="slide-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Hot_metalwork.jpg/1280px-Hot_metalwork.jpg" alt="Hot metal" onerror="this.style.display='none'"/>
+          <div class="cols">
+            <div class="col"><h4>🌡️ Temperature</h4><ul>
+              <li>Measures the <strong>average kinetic energy</strong> of particles in a substance</li>
+              <li>Higher temperature = particles move <strong>faster</strong></li>
+              <li>Measured in °C, K, or °F</li>
+              <li>Kelvin (K) is used in all scientific calculations</li>
+              <li>0 K = <strong>absolute zero</strong> — no particle motion at all</li>
+            </ul></div>
+            <div class="col"><h4>🔥 Heat</h4><ul>
+              <li>Energy transferred due to a <strong>temperature difference</strong></li>
+              <li>Always flows from <strong>hot → cold</strong></li>
+              <li>Continues until <strong>thermal equilibrium</strong> is reached</li>
+              <li>Unit of heat: <strong>Joule (J)</strong></li>
+              <li>Heat ≠ Temperature — a tiny spark is very hot but carries very little heat</li>
+            </ul></div>
+          </div>
+        </div>
+
+        <!-- T SLIDE 2 -->
+        <div class="slide">
+          <div><div class="slide-tag">Thermal Physics · SHC</div><h2>Specific Heat<br/>Capacity</h2></div>
+          <p class="slide-lead">Specific Heat Capacity (SHC) is the amount of heat energy required to raise the temperature of <strong style="color:var(--blush)">1 kg of a substance by 1°C (or 1 K)</strong>. High SHC = heats slowly; low SHC = heats quickly.</p>
+          <div class="fbox">Q = mcΔT</div>
+          <div class="cols" style="margin-top:.8rem">
+            <div class="col"><h4>Variables</h4><ul>
+              <li><strong>Q</strong> = heat energy (Joules, J)</li>
+              <li><strong>m</strong> = mass (kg)</li>
+              <li><strong>c</strong> = specific heat capacity (J/kg°C)</li>
+              <li><strong>ΔT</strong> = change in temperature (°C or K)</li>
+            </ul>
+            <div class="card" style="margin-top:.8rem"><h4>Common SHC Values</h4><p>Water: 4,200 J/kg°C<br/>Aluminium: 900 J/kg°C<br/>Steel/Iron: ~450 J/kg°C<br/>Copper: 385 J/kg°C</p></div></div>
+            <div class="col"><h4>Importance of SHC</h4><ul>
+              <li><strong>Climate Regulation</strong> — water's high SHC (4200 J/kg°C) absorbs enormous heat without large temperature changes, stabilizing Earth's climate</li>
+              <li><strong>Cooling Systems</strong> — water used in car radiators and industrial systems absorbs large heat amounts efficiently</li>
+              <li><strong>Cooking</strong> — metal pans have low SHC (~450 J/kg°C) so they heat up quickly, making them ideal for cooking</li>
+              <li><strong>Human Body</strong> — high water content helps maintain stable body temperature</li>
+            </ul></div>
+          </div>
+        </div>
+
+        <!-- T SLIDE 3 -->
+        <div class="slide">
+          <div><div class="slide-tag">Thermal Physics · SLH</div><h2>Specific<br/>Latent Heat</h2></div>
+          <p class="slide-lead">Specific Latent Heat (SLH) is the amount of heat energy required to <strong style="color:var(--blush)">change the state of 1 kg of a substance without changing its temperature</strong>. All energy goes into breaking or forming molecular bonds.</p>
+          <div class="cols">
+            <div class="col">
+              <h4>Two Types of SLH</h4>
+              <ul>
+                <li><strong>Lf — Latent Heat of Fusion</strong><br/>solid → liquid (melting)<br/>Ice: 334,000 J/kg</li>
+                <li><strong>Lv — Latent Heat of Vaporization</strong><br/>liquid → gas (evaporating/boiling)<br/>Water: 2,260,000 J/kg</li>
+              </ul>
+              <div class="fbox" style="margin-top:.8rem">Q = mL</div>
+              <p style="font-size:.78rem;color:var(--muted);margin-top:.4rem">Q = heat (J) · m = mass (kg) · L = latent heat (J/kg)</p>
+              <div class="card" style="margin-top:.8rem"><h4>💡 Key Note</h4><p>During a phase change, temperature stays constant — all heat energy goes into changing state, not raising temperature.</p></div>
+            </div>
+            <div class="col"><h4>Importance of SLH</h4><ul>
+              <li><strong>Cooling — Sweating</strong> — when sweat evaporates, it absorbs large amounts of heat from the body due to the high Lv of water, cooling the skin</li>
+              <li><strong>Refrigeration & AC</strong> — refrigerators use substances that absorb large latent heat during evaporation to keep food cold</li>
+              <li><strong>Weather & Climate</strong> — water evaporation and condensation drive cloud formation, rainfall, and large-scale weather patterns</li>
+              <li><strong>Food Preservation</strong> — freezing and melting involve latent heat, helping maintain stable temperatures in cold storage</li>
+            </ul></div>
+          </div>
+        </div>
+
+        <!-- T SLIDE 4 -->
+        <div class="slide">
+          <div><div class="slide-tag">Thermal Physics · Heat Transfer</div><h2>Methods of<br/>Heat Transfer</h2></div>
+          <p class="slide-lead">There are three methods of heat transfer. Each works differently and dominates in different materials and situations.</p>
+          <div class="cards">
+            <div class="card"><h4>🤝 Conduction</h4><p>Heat transfer through <strong style="color:var(--blush)">direct contact</strong>. Particles vibrate and pass energy to neighboring particles. Works best in solids — especially metals.<br/><br/><em style="font-size:.75rem">Examples: a metal spoon in hot soup heats up; heat traveling along a rod.</em></p></div>
+            <div class="card"><h4>🌀 Convection</h4><p>Heat transfer through <strong style="color:var(--blush)">fluid movement</strong>. Hot fluid rises (less dense), cool fluid sinks (denser), creating circulation currents. In liquids and gases.<br/><br/><em style="font-size:.75rem">Examples: boiling water, sea breezes, central heating radiators.</em></p></div>
+            <div class="card"><h4>☀️ Radiation</h4><p>Heat transfer through <strong style="color:var(--blush)">electromagnetic waves</strong>. No medium required — can travel through a vacuum at the speed of light.<br/><br/><em style="font-size:.75rem">Examples: sunlight warming Earth, warmth felt from a campfire at distance.</em></p></div>
+          </div>
+          <div class="card" style="max-width:540px"><h4>💡 Key Difference</h4><p>Conduction and convection both require matter to transfer heat. Radiation does NOT — that's why the Sun's energy can reach Earth through the vacuum of space.</p></div>
+        </div>
+
+        <!-- T SLIDE 5 -->
+        <div class="slide">
+          <div><div class="slide-tag">Thermal Physics · Gas Laws</div><h2>Gas Laws</h2></div>
+          <p class="slide-lead">Gas laws describe the relationships between <strong style="color:var(--blush)">pressure, volume, and temperature</strong> for a fixed amount of gas. Fundamental to understanding engines, weather, and the atmosphere.</p>
+          <div class="cols">
+            <div class="col">
+              <h4>Boyle's Law</h4>
+              <p style="font-size:.82rem;color:var(--muted);margin-bottom:.5rem">Pressure is <strong>inversely proportional</strong> to Volume (constant temperature)</p>
+              <ul><li>P↑ when V↓ — squeeze a gas, pressure rises</li><li>P↓ when V↑ — expand a gas, pressure drops</li></ul>
+              <div class="fbox fbox-sm" style="margin-top:.7rem">P₁V₁ = P₂V₂</div>
+              <h4 style="margin-top:1.2rem">Charles's Law</h4>
+              <p style="font-size:.82rem;color:var(--muted);margin-bottom:.5rem">Volume is <strong>directly proportional</strong> to Temperature (constant pressure)</p>
+              <ul><li>T↑ = V↑ — heat a gas, it expands</li><li>T↓ = V↓ — cool a gas, it contracts</li></ul>
+              <div class="fbox fbox-sm" style="margin-top:.7rem">V₁/T₁ = V₂/T₂</div>
+            </div>
+            <div class="col">
+              <h4>Ideal Gas Law</h4>
+              <p style="font-size:.82rem;color:var(--muted);margin-bottom:.6rem">Combines Boyle's and Charles's Laws:</p>
+              <div class="fbox" style="margin-bottom:.9rem">PV = nRT</div>
+              <ul>
+                <li><strong>P</strong> = pressure (Pa)</li>
+                <li><strong>V</strong> = volume (m³)</li>
+                <li><strong>n</strong> = amount of gas (moles)</li>
+                <li><strong>R</strong> = 8.314 J/mol·K (gas constant)</li>
+                <li><strong>T</strong> = temperature in <strong>Kelvin (K)</strong> — always!</li>
+              </ul>
+              <div class="card" style="margin-top:1rem"><h4>💡 Real Life</h4><p>A bicycle tire feels harder on a hot day — higher temperature increases gas pressure inside at constant volume. Always check tire pressure when tires are cold!</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- T SLIDE 6 -->
+        <div class="slide">
+          <div><div class="slide-tag">Thermal Physics · Exercises</div><h2>Exercise<br/>Questions</h2></div>
+          <p class="slide-lead">Click each question to reveal the full worked solution. Try solving it yourself first! 🩷</p>
+          <div style="display:flex;flex-direction:column;gap:.7rem">
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">Q1 — A 2 kg block of aluminum is heated from 25°C to 35°C. Specific heat capacity of aluminum = 900 J/kg°C. Calculate the heat energy absorbed.</div>
+              <div class="ex-ans">Formula: Q = mcΔT
+Given: m = 2 kg  ·  c = 900 J/kg°C  ·  ΔT = 35 − 25 = 10°C
+Q = 2 × 900 × 10
+✅ Q = 18,000 J</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">Q2 — 500 g of water is heated from 20°C to 60°C. Specific heat capacity of water = 4200 J/kg°C. Calculate the heat energy required.</div>
+              <div class="ex-ans">Convert mass: 500 g = 0.5 kg
+ΔT = 60 − 20 = 40°C
+Q = mcΔT = 0.5 × 4200 × 40
+✅ Q = 84,000 J</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">Q3 — Calculate the heat required to melt 3 kg of ice at 0°C. Specific latent heat of fusion of ice = 334,000 J/kg.</div>
+              <div class="ex-ans">Formula: Q = mL
+Q = 3 × 334,000
+✅ Q = 1,002,000 J  =  1.002 × 10⁶ J</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">Q4 — 2 kg of water at 100°C is converted into steam at 100°C. Specific latent heat of vaporization = 2,260,000 J/kg. Calculate the energy required.</div>
+              <div class="ex-ans">Formula: Q = mL
+Q = 2 × 2,260,000
+✅ Q = 4,520,000 J  =  4.52 × 10⁶ J</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">Q5 — A 1 kg block of ice at 0°C is completely melted then heated to 20°C. Lf = 334,000 J/kg · c(water) = 4200 J/kg°C. Calculate total heat energy.</div>
+              <div class="ex-ans">Step 1 — Melt ice (0°C solid → 0°C liquid):
+Q₁ = mL = 1 × 334,000 = 334,000 J
+
+Step 2 — Heat water from 0°C to 20°C:
+Q₂ = mcΔT = 1 × 4200 × 20 = 84,000 J
+
+Step 3 — Total:
+Qtotal = Q₁ + Q₂ = 334,000 + 84,000
+✅ Qtotal = 418,000 J</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">Q6 — Why does water take longer to heat up compared to metal?</div>
+              <div class="ex-ans">✅ Because water has a higher Specific Heat Capacity (4200 J/kg°C vs ~450 J/kg°C for metals).
+It requires more heat energy to raise its temperature by 1°C compared to the same mass of metal.</div>
+            </div>
+            <div class="ex-item" onclick="this.querySelector('.ex-ans').classList.toggle('show')">
+              <div class="ex-q">Q7 — Why does sweating cool the body?</div>
+              <div class="ex-ans">✅ Because when sweat evaporates, it absorbs a large amount of heat from the body due to the high Specific Latent Heat of Vaporization of water (2,260,000 J/kg).
+This removes thermal energy from the skin surface, effectively cooling the body.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="bottom-nav">
+        <button class="bnav-btn" id="t-prev" onclick="tGo(tCur-1)" disabled>← Prev</button>
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <div class="progress" id="t-dots"></div>
+          <span class="ctr" id="t-ctr">1 / 7</span>
+        </div>
+        <button class="bnav-btn" id="t-next" onclick="tGo(tCur+1)">Next →</button>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* CURSOR */
+const curEl=document.getElementById('cur'),ringEl=document.getElementById('ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;curEl.style.left=mx+'px';curEl.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ringEl.style.left=rx+'px';ringEl.style.top=ry+'px';requestAnimationFrame(loop);})();
+
+/* SPARKLES */
+const sc=document.getElementById('sparks');
+const syms=['✦','✧','★','✿','♡','⊹','·'];
+for(let i=0;i<32;i++){
+  const s=document.createElement('span');s.className='sp';
+  s.textContent=syms[i%syms.length];
+  s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${.4+Math.random()*.7}rem;animation-duration:${3+Math.random()*5}s;animation-delay:${Math.random()*7}s;`;
+  sc.appendChild(s);
+}
+
+/* PAGE TRANSITIONS */
+let currentPage='home';
+function showPage(name){
+  if(name===currentPage)return;
+  const old=document.getElementById('page-'+currentPage);
+  const next=document.getElementById('page-'+name);
+  old.classList.add('exit');
+  setTimeout(()=>{old.classList.remove('active','exit');},420);
+  next.style.transform='translateY(20px)';
+  next.style.opacity='0';
+  next.classList.add('active');
+  setTimeout(()=>{next.style.transform='';next.style.opacity='';},20);
+  currentPage=name;
+  next.scrollTop=0;
+  document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('here'));
+  const nb=document.getElementById('nav-'+name);
+  if(nb)nb.classList.add('here');
+}
+
+/* MEASUREMENT SLIDES */
+const M_TOTAL=7;let mCur=0;
+function buildMDots(){
+  const d=document.getElementById('m-dots');d.innerHTML='';
+  for(let i=0;i<M_TOTAL;i++){const b=document.createElement('button');b.className='dot'+(i===mCur?' on':'');b.onclick=(()=>{const x=i;return()=>mGo(x);})();d.appendChild(b);}
+}
+function mGo(n){
+  if(n<0||n>=M_TOTAL)return;mCur=n;
+  document.getElementById('m-track').style.transform=`translateX(-${mCur*100}%)`;
+  document.querySelectorAll('#m-sidebar .sitem').forEach((b,i)=>b.classList.toggle('active',i===mCur));
+  document.getElementById('m-ctr').textContent=`${mCur+1} / ${M_TOTAL}`;
+  document.getElementById('m-prev').disabled=mCur===0;
+  document.getElementById('m-next').disabled=mCur===M_TOTAL-1;
+  buildMDots();
+}
+buildMDots();
+
+/* THERMAL SLIDES */
+const T_TOTAL=7;let tCur=0;
+function buildTDots(){
+  const d=document.getElementById('t-dots');d.innerHTML='';
+  for(let i=0;i<T_TOTAL;i++){const b=document.createElement('button');b.className='dot'+(i===tCur?' on':'');b.onclick=(()=>{const x=i;return()=>tGo(x);})();d.appendChild(b);}
+}
+function tGo(n){
+  if(n<0||n>=T_TOTAL)return;tCur=n;
+  document.getElementById('t-track').style.transform=`translateX(-${tCur*100}%)`;
+  document.querySelectorAll('#t-sidebar .sitem').forEach((b,i)=>b.classList.toggle('active',i===tCur));
+  document.getElementById('t-ctr').textContent=`${tCur+1} / ${T_TOTAL}`;
+  document.getElementById('t-prev').disabled=tCur===0;
+  document.getElementById('t-next').disabled=tCur===T_TOTAL-1;
+  buildTDots();
+}
+buildTDots();
+
+/* KEYBOARD */
+document.addEventListener('keydown',e=>{
+  if(currentPage==='measurement'){if(e.key==='ArrowRight'||e.key==='ArrowDown')mGo(mCur+1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')mGo(mCur-1);}
+  if(currentPage==='thermal'){if(e.key==='ArrowRight'||e.key==='ArrowDown')tGo(tCur+1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')tGo(tCur-1);}
+});
+</script>
+</body>
+</html>
