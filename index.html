@@ -133,24 +133,108 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;
   background-size:200%;animation:shimmer 3s linear infinite;}
 
 /* TEAM */
-.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.1rem;}
-.tcard{background:var(--card);border:1px solid var(--border);border-radius:22px;
-  padding:2rem 1.6rem;text-align:center;transition:all .32s;position:relative;overflow:hidden;}
-.tcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--rose),var(--blush));opacity:0;transition:opacity .3s;}
-.tcard:hover{transform:translateY(-7px);box-shadow:0 22px 55px rgba(255,45,120,.2);border-color:rgba(255,110,180,.4);}
-.tcard:hover::before{opacity:1;}
-.ava{width:68px;height:68px;border-radius:20px;margin:0 auto 1rem;
-  display:flex;align-items:center;justify-content:center;font-size:2rem;
-  background:linear-gradient(135deg,rgba(255,45,120,.25),rgba(255,110,180,.15));
-  border:1.5px solid rgba(255,110,180,.3);}
-.tcard-name{font-family:'Playfair Display',serif;font-size:1.05rem;color:#fff;margin-bottom:.25rem;}
-.tcard-no{font-size:.73rem;color:var(--rose);margin-bottom:.7rem;font-weight:700;letter-spacing:.06em;}
-.role-pills{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;}
-.rp{font-size:.68rem;padding:.22rem .7rem;border-radius:999px;
-  background:rgba(255,110,180,.1);color:var(--blush);border:1px solid rgba(255,110,180,.25);font-weight:600;}
-footer{text-align:center;padding:3.5rem 2rem;color:var(--muted);font-size:.78rem;line-height:2.2;border-top:1px solid var(--border);}
-footer strong{color:var(--blush);}
+.team-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:1.1rem;
+}
+
+.tcard{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:1.2rem 1.2rem 1.6rem; /* adjusted for images */
+  text-align:center;
+  transition:all .32s;
+  position:relative;
+  overflow:hidden;
+}
+
+.tcard::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:2px;
+  background:linear-gradient(90deg,var(--rose),var(--blush));
+  opacity:0;
+  transition:opacity .3s;
+}
+
+.tcard:hover{
+  transform:translateY(-7px);
+  box-shadow:0 22px 55px rgba(255,45,120,.2);
+  border-color:rgba(255,110,180,.4);
+}
+
+.tcard:hover::before{
+  opacity:1;
+}
+
+/* PROFILE PHOTO */
+.ava{
+  width:100%;
+  aspect-ratio:4 / 5;        /* makes image taller */
+  object-fit:contain;        /* shows full photo (NOT zoomed) */
+  object-position:center;
+  border-radius:18px;
+  margin:0 auto 1rem;
+  display:block;
+  background:#111;
+  border:1.5px solid rgba(255,110,180,.3);
+  transition:transform .4s ease;
+}
+
+/* smooth hover zoom */
+.tcard:hover .ava{
+  transform:scale(1.04);
+}
+
+.tcard-name{
+  font-family:'Playfair Display',serif;
+  font-size:1.05rem;
+  color:#fff;
+  margin-bottom:.25rem;
+}
+
+.tcard-no{
+  font-size:.73rem;
+  color:var(--rose);
+  margin-bottom:.7rem;
+  font-weight:700;
+  letter-spacing:.06em;
+}
+
+.role-pills{
+  display:flex;
+  gap:.4rem;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+.rp{
+  font-size:.68rem;
+  padding:.22rem .7rem;
+  border-radius:999px;
+  background:rgba(255,110,180,.1);
+  color:var(--blush);
+  border:1px solid rgba(255,110,180,.25);
+  font-weight:600;
+}
+
+footer{
+  text-align:center;
+  padding:3.5rem 2rem;
+  color:var(--muted);
+  font-size:.78rem;
+  line-height:2.2;
+  border-top:1px solid var(--border);
+}
+
+footer strong{
+  color:var(--blush);
+}
 
 /* TOPIC PAGES */
 .topic-page{padding-top:58px;}
@@ -316,7 +400,7 @@ footer strong{color:var(--blush);}
     <p class="sec-desc">Click either topic to open its interactive slideshow — explore each concept one slide at a time, with clickable exercises at the end.</p>
     <div class="topic-grid">
       <div class="tlink" onclick="showPage('measurement')">
-        <img class="tlink-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Metric_system_rulers.svg/1280px-Metric_system_rulers.svg.png" alt="Measurement" onerror="this.style.background='#22001a';this.style.height='80px';"/>
+        <img class="tlink-img" src="https://study.com/cimages/videopreview/videopreview-full/auodedvzcf.jpg" alt="Measurement" onerror="this.style.background='#22001a';this.style.height='80px';"/>
         <div class="tlink-body">
           <div class="tlink-tag">Chapter 4</div>
           <h3>📏 Measurement</h3>
@@ -325,7 +409,7 @@ footer strong{color:var(--blush);}
         </div>
       </div>
       <div class="tlink" onclick="showPage('thermal')">
-        <img class="tlink-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Hot_metalwork.jpg/1280px-Hot_metalwork.jpg" alt="Thermal Physics" onerror="this.style.background='#22001a';this.style.height='80px';"/>
+        <img class="tlink-img" src="https://dryuc24b85zbr.cloudfront.net/tes/resources/12431161/image?width=500&height=500&version=1606934424968" alt="Thermal Physics" onerror="this.style.background='#22001a';this.style.height='80px';"/>
         <div class="tlink-body">
           <div class="tlink-tag">Chapter 5</div>
           <h3>🌡️ Thermal Physics</h3>
