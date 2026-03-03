@@ -174,21 +174,63 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;
   opacity:1;
 }
 
+/* TEAM */
+.team-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:1.1rem;
+}
+
+.tcard{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:1.2rem 1.2rem 1.6rem;
+  text-align:center;
+  transition:all .32s;
+  position:relative;
+  overflow:hidden;
+  max-width:210px;   
+  margin:auto;
+}
+
+.tcard::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:2px;
+  background:linear-gradient(90deg,var(--rose),var(--blush));
+  opacity:0;
+  transition:opacity .3s;
+}
+
+.tcard:hover{
+  transform:translateY(-7px);
+  box-shadow:0 22px 55px rgba(255,45,120,.2);
+  border-color:rgba(255,110,180,.4);
+}
+
+.tcard:hover::before{
+  opacity:1;
+}
+
 /* PROFILE PHOTO */
 .ava{
-  width:100%;
-  height:220px;              /* controls image height */
-  object-fit:cover;          /* fills nicely */
-  object-position:center top;/* shows face (not zoomed) */
-  border-radius:18px;
+  width:68px;
+  height:68px;
+  object-fit:cover;
+  object-position:center top;
+  border-radius:20px;
   margin:0 auto 1rem;
   display:block;
   border:1.5px solid rgba(255,110,180,.3);
-  transition:transform .4s ease;
+  transition:transform .3s ease;
 }
 
 .tcard:hover .ava{
-  transform:scale(1.04);
+  transform:scale(1.08);
 }
 
 .tcard-name{
